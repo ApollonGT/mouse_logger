@@ -1,0 +1,42 @@
+from flask import Flask, request, render_template
+import sqlite3
+import json
+
+app = Flask(__name__)
+
+@app.route('/', methods=['GET'])
+def index():
+    return render_template('./index.html')
+
+@app.route('/api/load', methods=['GET'])
+def load():
+    conn = sqlite3.connect('mouse_log.db')
+
+    # This enables column access by name: row['column_name']
+    conn.row_factory = sqlite3.Row
+
+    cur = conn.cursor()
+
+    rows = cur.execute("SELECT * FROM logs").fetchall()
+
+    cur.close()
+    conn.close()
+
+    response =  json.dumps( [dict(x) for x in rows], sort_keys = True, indent = 4, separators = (',', ': '))
+    return render_template('load.html', response=response)
+
+@app.route('/api/save', methods=['POST'])
+def save():
+    conn = sqlite3.connect('mouse_log.db')
+    cur = conn.cursor()
+
+    data = request.get_json()
+    for info in data:
+        query = "INSERT INTO logs VALUES (?,strftime('%s','now'),?,?,?,?,'home',?)"
+        vals = (1, info['winX'], info['winY'], info['x'], info['y'], info['mouseon'])
+        cur.execute(query, vals)
+        conn.commit()
+
+    cur.close()
+    conn.close()
+    return 'OK'
