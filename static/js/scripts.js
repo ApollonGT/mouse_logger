@@ -44,7 +44,6 @@ $(document).ready(function(){
     function logMousePosition() {
         idleTime = idleTime + 1;
         if (idleTime > 2 && mustlog) {
-            console.log("logging");
             mustlog = false;
             last_mouseon = data.mouseon;
 
