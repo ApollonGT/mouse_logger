@@ -6,7 +6,7 @@ Based on jQuery for client side tracking. API is implemented with flask and the 
 
 #### Usage
 
-* Install Flask (pip install flask)
+* Install Flask `pip install flask`
 * Clone this repository
 * CD into the cloned folder
 * Type: `FLASK_APP=index.py flask run`
