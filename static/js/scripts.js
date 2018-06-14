@@ -4,7 +4,8 @@ var data = {
     y: 0,
     winX: 0,
     winY: 0,
-    mouseon: ""
+    mouseon: "empty space",
+    agent: "-"
 };
 var mustlog = false;
 var last_mouseon = "";
@@ -12,7 +13,7 @@ var last_mouseon = "";
 var log_data = [];
 
 $(document).ready(function(){
-    setInterval(logMousePosition, 200);
+    setInterval(logMousePosition, 100);
     setInterval(sendData, 10000);
 
     $('body').mousemove(function(event){
@@ -23,25 +24,27 @@ $(document).ready(function(){
         data.y = event.pageY;
         data.winX = $(window).width();
         data.winY = $(window).height();
+        data.mouseon = $(event.target).attr("data-name");
+        data.agent = navigator.userAgent;
         
         $("#x").html(data.x);
         $("#y").html(data.y);
         $("#windim").html(data.winX+" x "+data.winY);
-        if ($(event.target).attr('data-name')) {
-            data.mouseon = $(event.target).attr("data-name");
-
-            $("#mouseon").html($(event.target).attr("data-name"))
+        $("#agent").html(data.agent);
+        if (!data.mouseon) {
+            data.mouseon = "empty space";
+        }
+        if (data.mouseon != "empty space") {
+            $("#mouseon").html(data.mouseon)
         } else {
             $("#mouseon").html("empty space");
-            data.mouseon = "";
         }
     });
 
     function logMousePosition() {
         idleTime = idleTime + 1;
-        if (idleTime > 5 && mustlog &&
-            data.mouseon != "empty space" && data.mouseon != "" &&
-            data.mouseon != last_mouseon) {
+        if (idleTime > 2 && mustlog) {
+            console.log("logging");
             mustlog = false;
             last_mouseon = data.mouseon;
 
