@@ -70,3 +70,12 @@ body {
 pre {
     color: white;
 }
+
+#user {
+    color: orange;
+    width: 90%;
+}
+
+th {
+    white-space: nowrap;
+}

@@ -12,28 +12,37 @@
             <div id="coordinates">
                 <table>
                     <tr>
+                        <th >User Id</th>
+                        <td>
+                            <form target="/" method="GET">
+                                <input id="user" name="user" value="{{ user }}"/>
+                                <input type="submit" hidden autofocus/>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr>
                         <th>x</th><th>y</th>
                     </tr>
                     <tr>
-                        <td id="x"></td><td id="y"></td>
+                        <td id="x">-</td><td id="y">-</td>
                     </tr>
                     <tr>
                         <th colspan="2">Window dimensions</th>
                     </tr>
                     <tr>
-                        <td id="windim" colspan="2"></td>
+                        <td id="windim" colspan="2">- x -</td>
                     </tr>
                     <tr>
                         <th colspan="2">Mouse on:</th>
                     </tr>
                     <tr>
-                        <td id="mouseon" colspan="2"></td>
+                        <td id="mouseon" colspan="2"> - </td>
                     </tr>
                     <tr>
                         <th colspan="2">Agent:</th>
                     </tr>
                     <tr>
-                        <td id="agent" colspan="2"></td>
+                        <td id="agent" colspan="2">-</td>
                     </tr>
                 </table>
             </div>

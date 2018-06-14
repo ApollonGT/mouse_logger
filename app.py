@@ -1,5 +1,4 @@
 from flask import Flask, request, render_template
-from random import randint
 import sqlite3
 import json
 
@@ -10,9 +9,11 @@ user_id = 1
 @app.route('/', methods=['GET'])
 def index():
     global user_id
-    user_id = randint(1,10)
+    user_id = request.values.get('user')
+    if not user_id:
+        user_id = 1
 
-    return render_template('./index.html')
+    return render_template('./index.html', user=user_id)
 
 @app.route('/api/load', methods=['GET'])
 def load():
