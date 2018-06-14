@@ -9,7 +9,7 @@ Based on jQuery for client side tracking. API is implemented with flask and the 
 * Install Flask `pip install flask`
 * Clone this repository
 * CD into the cloned folder
-* Type: `FLASK_APP=index.py flask run`
+* Type: `flask run`
 * Open a browser and visit: localhost:5000
 
 To see the logged data visit: localhost:5000/api/load
