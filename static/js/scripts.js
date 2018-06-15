@@ -5,7 +5,8 @@ var data = {
     winX: 0,
     winY: 0,
     mouseon: "empty space",
-    agent: "-"
+    agent: "-",
+    mouse_button: "NONE"
 };
 var mustlog = false;
 var last_mouseon = "";
@@ -39,6 +40,28 @@ $(document).ready(function(){
         } else {
             $("#mouseon").html("empty space");
         }
+    });
+
+    $('body').mousedown(function(event){
+        if (event.which === 1) {
+            data.mouse_button = "LEFT";
+        } else if (event.which === 2) {
+            data.mouse_button = "MIDDLE";
+        } else if (event.which === 3) {
+            data.mouse_button = "RIGHT"
+        } else {
+            return;
+        }
+        $("#mousebutton").html(data.mouse_button);
+        
+        // Force log click events
+        let copy_data = Object.assign({}, data);
+        log_data.push(copy_data);
+    });
+
+    $('body').mouseup(function(event){
+        data.mouse_button = "NONE";
+        $("#mousebutton").html(data.mouse_button);
     });
 
     function logMousePosition() {
