@@ -78,6 +78,14 @@ Lets see this template:
                         <td id="mouseon" colspan="2">empty space</td>
                     </tr>
                     <tr>
+                        <th>Position:</th>
+                        <th>Dimensions:</th>
+                    </tr>
+                    <tr>
+                        <td id="pos">0</td>
+                        <td id="dim">0</td>
+                    </tr>
+                    <tr>
                         <th colspan="2">Mouse button:</th>
                     </tr>
                     <tr>
@@ -137,6 +145,12 @@ var data = {
     winX: 0,
     winY: 0,
     mouseon: "empty space",
+    element: {
+        top: 0,
+        left: 0,
+        width: 0,
+        height: 0
+    },
     agent: "-",
     mouse_button: "NONE"
 };
@@ -148,17 +162,21 @@ var log_data = [];
 
 This is where we initialize the data to be used later on. The meaning of each of these data:
 
-|   Variable Name        |     Description                                                                             |
-| :--------------------- | :----------------------------------------------------------------------------------------   |
-| idleTime               | The time in 0.1sec that the mouse is not moving                                             |
-| data.x, data.y         | The mouse coordinates                                                                       |
-| data.winX, data.winY   | The browser window dimensions                                                               |
-| data.mouseon           | The data-name of the content on which the mouse is on. 'empty space' means no-content       |
-| data.agent             | A string with information about the os, browser, ... of the user                            |
-| data.mouse_button      | The mouse button status. Possible values: "NONE", "LEFT", "RIGHT", "MIDDLE"                 |
-| mustlog                | A flag that defines if the data has to be logged or not. True or False                      |
-| last_mouseon           | The content data-name on which the mouse was during the last log                            |
-| log_data               | The array of the logged data that will be sent to the server to be saved in the database    |
+| Variable Name          | Description                                                                               |
+| :--------------------- | :---------------------------------------------------------------------------------------- |
+| idleTime               | The time in 0.1sec that the mouse is not moving                                           |
+| data.x, data.y         | The mouse coordinates                                                                     |
+| data.winX, data.winY   | The browser window dimensions                                                             |
+| data.mouseon           | The data-name of the content on which the mouse is on. 'empty space' means no-content     |
+| data.element.top       | The distance of the element from the top of the window                                    |
+| data.element.left      | The distance of the element from the left of the window                                   |
+| data.element.width     | The width of the element                                                                  |
+| data.element.height    | The height of the element                                                                 |
+| data.agent             | A string with information about the os, browser, ... of the user                          |
+| data.mouse_button      | The mouse button status. Possible values: "NONE", "LEFT", "RIGHT", "MIDDLE"               |
+| mustlog                | A flag that defines if the data has to be logged or not. True or False                    |
+| last_mouseon           | The content data-name on which the mouse was during the last log                          |
+| log_data               | The array of the logged data that will be sent to the server to be saved in the database  |
 
 
 ```javascript
@@ -192,6 +210,18 @@ every 0.1seconds, while the `sendData` function will be executed every 10seconds
         $("#agent").html(data.agent);
         if (!data.mouseon) {
             data.mouseon = "empty space";
+            data.element.top = 0;
+            data.element.left = 0;
+            data.element.width = 0;
+            data.element.height = 0;
+        } else {
+            var pos = $(event.target).position();
+            var w = $(event.target).width();
+            var h = $(event.target).height();
+            data.element.top = pos.top;
+            data.element.left = pos.left;
+            data.element.width = w;
+            data.element.height = h;
         }
         if (data.mouseon != "empty space") {
             $("#mouseon").html(data.mouseon)
@@ -204,10 +234,10 @@ every 0.1seconds, while the `sendData` function will be executed every 10seconds
 In this part of the code we bind the `mousemove` event on the `body` html element, with the function defined above.
 So when the mouse moves we turn the `mustlog` flag to true. This means that something new has happened and we must log it. 
 Also the `idleTime` is set to zero since we are not in the idle state anymore. Afterwords the `data` object is being updated with the new mouse position 
-information. Thext the html table fields are being updated so we can have visually this information. `$('#x').html(data.x)` means: 
+information. Next the html table fields are being updated so we can have visually this information. `$('#x').html(data.x)` means: 
 *Find the element with `id="x"` and set its inner html to the value that is stored in `data.x`*. Then we check if the `data.mouseon` has a value. If not, it means 
 the mouse was not on one of the elements of interest, so we set the value to 'empty space'. Finally we decide what to write in the `mouseon` field
-of the table displayed on the screen.
+of the table displayed on the screen. If the mouse is on an element then additionally we keep the elements position (top, left) and dimensions (width, height).
 
 Lets see the next part of the script:
 
@@ -312,10 +342,11 @@ def save():
 
     data = request.get_json()
     for info in data:
-        query = "INSERT INTO logs VALUES (?,strftime('%s','now'),?,?,?,?,'home',?,?,?)"
-        vals = (user_id, 
-                info['winX'], info['winY'], info['x'], info['y'], 
-                info['mouseon'], info['agent'], info['mouse_button']
+        query = "INSERT INTO logs VALUES (?,strftime('%s','now'),?,?,?,?,'home',?,?,?,?,?,?,?)"
+        vals = (user_id,
+                info['winX'], info['winY'], info['x'], info['y'],
+                info['mouseon'], info['agent'], info['mouse_button'],
+                info['element']['top'], info['element']['left'], info['element']['width'], info['element']['height']
                 )
         cur.execute(query, vals)
         conn.commit()
