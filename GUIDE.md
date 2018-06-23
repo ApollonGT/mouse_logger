@@ -16,7 +16,7 @@ function should run when a request comes to each route.
 
 #### index
 
-```
+```python
 @app.route('/', methods=['GET'])
 def index():
     global user_id
@@ -38,7 +38,7 @@ value of user_id has been passed. This means an html is being sent to the browse
 
 Lets see this template:
 
-```
+```html
 <html lang="en">
     <head>
         <meta charset="utf-8">
