@@ -302,4 +302,82 @@ Every 10seconds (So we don't keep spamming the server with data), if the `log_da
 Now lets go back to the Flask routes and see what happens when the data arrive to the `/api/save` route:
 
 #### save
+
+```python
+@app.route('/api/save', methods=['POST'])
+def save():
+    global user_id
+    conn = sqlite3.connect('mouse_log.db')
+    cur = conn.cursor()
+
+    data = request.get_json()
+    for info in data:
+        query = "INSERT INTO logs VALUES (?,strftime('%s','now'),?,?,?,?,'home',?,?,?)"
+        vals = (user_id, 
+                info['winX'], info['winY'], info['x'], info['y'], 
+                info['mouseon'], info['agent'], info['mouse_button']
+                )
+        cur.execute(query, vals)
+        conn.commit()
+
+    cur.close()
+    conn.close()
+    return 'OK'
+```
+
+This is where the data arrive from the AJAX POST. Here we define the route `/api/save` which accepts only `POST` methods.
+This means you cannot open this url with your browser (this is a `GET` request), but you can only post data from a form.
+
+First of all we get access to the global variable `user_id` so we store it along with the incoming data, to the database.
+
+Next we make a sqlite connection to the file `mouse_log.db` and get the *cursor* to that connection so we can execute queries.
+
+Getting the request data and knowing that it is an array of JSON objects, we iterate over these data and for each object we 
+execute a query to save the data into the database.
+
+In the end we close the database connection.
+
 #### load
+
+Finally we define another route so we can see the stored data, just to be sure everything works.
+
+```python
+@app.route('/api/load', methods=['GET'])
+def load():
+    conn = sqlite3.connect('mouse_log.db')
+
+    # This enables column access by name: row['column_name']
+    conn.row_factory = sqlite3.Row
+
+    cur = conn.cursor()
+
+    rows = cur.execute("SELECT * FROM logs").fetchall()
+
+    cur.close()
+    conn.close()
+
+    response =  json.dumps( [dict(x) for x in rows], sort_keys = True, indent = 4, separators = (',', ': '))
+    return render_template('load.html', response=response)
+```
+
+The route is `/api/load` and here we get all the data from the database and pass them in the `load.html` template which is the following:
+
+```html
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Simple Mouse tracker</title>
+        <link rel="stylesheet" href="/static/css/styles.css">
+    </head>
+
+    <body>
+        <div id="main">
+            <pre>
+                {{response}}
+            </pre>
+        </div>
+    </body>
+</html>
+```
+
+All we get here is a preformatted JSON (the response from the route). Just to see the data stored in the database.
