@@ -230,7 +230,76 @@ Lets see the next part of the script:
     });
 ```
 
+Here we catch the click event of the mouse, on the body element. More specifically the `mousedown` event. What happens here is:
 
+* We save the mouse button status (LEFT, MIDDLE or RIGHT) in the `data.mouse_button`
+* We update the table on the screen with this value
+* We make a copy of the `data` object so we can store it in our log_data
+* We save the copy of the `data` object in the `log_data` array
+
+Note that we have to make the copy, otherwise if we put the data itself in the array, on the next modification of the data, the
+array will has the new state, hence we will loose the last saved state.
+
+```javascript
+    $('body').mouseup(function(event){
+        data.mouse_button = "NONE";
+        $("#mousebutton").html(data.mouse_button);
+    });
+```
+
+Of course, when the mouse button is released, we have to change the `data.mouse_button` to `NONE` and update the respective field in the
+table on the screen.
+
+Now, lets see the definition of the functions that are being called periodically because of the `setInterval` we used in the beginning of 
+the script.
+
+```javascript
+    function logMousePosition() {
+        idleTime = idleTime + 1;
+        if (idleTime > 2 && mustlog) {
+            mustlog = false;
+            last_mouseon = data.mouseon;
+
+            // I need to copy so I can modify the initial data
+            let copy_data = Object.assign({}, data);
+            log_data.push(copy_data);
+        }
+    }
+```
+
+Each time this function is called: 
+* It updates the value of `idleTime` with +1. This means the `idleTime` adds 1 each 0.1sec
+* When the `idleTime` is more than 2 (at least 0.6 seconds the mouse is not moving) and the `mustlog` is true (this information has not been logged already):
+    * we set the `mustlog` to false (so we don't save the same information multiple times)
+    * we store the value of `last_mouseon` (so we know where the mouse was wen we stored the data last time)
+    * we make a copy of the `data` object
+    * we store the copy of `data` in the `log_data` array
+
+
+And Finally:
+
+```javascript
+    function sendData() {
+        if (log_data.length > 0) {
+            $.ajax({
+                type: "POST",
+                url: "/api/save",
+                data: JSON.stringify(log_data, null, '\t'),
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json'
+            });
+            log_data = [];
+        }
+    }
+```
+
+Every 10seconds (So we don't keep spamming the server with data), if the `log_data` is not empty:
+
+* We convert the `log_data` array into a json string (using JSON.stringify) 
+* We send this string to the server using an AJAX POST request, to the url: `/api/save`
+* We empty `log_data` so we start logging new data
+
+Now lets go back to the Flask routes and see what happens when the data arrive to the `/api/save` route:
 
 #### save
 #### load
