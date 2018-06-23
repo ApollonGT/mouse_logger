@@ -148,7 +148,7 @@ var log_data = [];
 
 This is where we initialize the data to be used later on. The meaning of each of these data:
 
-| : Variable Name      : | :   Description                                                                          :  |
+|   Variable Name        |     Description                                                                             |
 | :--------------------- | :----------------------------------------------------------------------------------------   |
 | idleTime               | The time in 0.1sec that the mouse is not moving                                             |
 | data.x, data.y         | The mouse coordinates                                                                       |
