@@ -44,7 +44,7 @@ def save():
         vals = (user_id,
                 info['winX'], info['winY'], info['x'], info['y'],
                 info['mouseon'], info['agent'], info['mouse_button'],
-                info['el_top'], info['el_left'], info['el_width'], info['height']
+                info['element']['top'], info['element']['left'], info['element']['width'], info['element']['height']
                 )
         cur.execute(query, vals)
         conn.commit()
