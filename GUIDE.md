@@ -116,3 +116,121 @@ Lets see this template:
 </html>
 ```
 
+In the header of this template we include a css file `styles.css` where lies the css that defines the style of this page.
+
+In the first part of the `body` we have a table with the information that is being logged. In the form that appears on the first line of the table
+we have the `{{ user }}` value, which is the user id passed from the `index()` function during the render of the template.
+
+After this table (we will see later on, how it is filled with the values), we have a `div` with `id="container"` which contains 16 divs with `id="content"`. 
+These contents have a `data-name` attribute which will be used to identify each content during the logging.
+
+In the end of the `body` we include two scripts. The one is the well known *jQuery*, which is a JavaScript wrapper and makes JavaScript easier.
+The next script is the `scripts.js` which contains all the client side logic and takes care of recording and sending the data back to the server so we can log them in our database.
+
+Lets see these scripts one by one:
+
+```javascript
+var idleTime = 0;
+var data = {
+    x: 0,
+    y: 0,
+    winX: 0,
+    winY: 0,
+    mouseon: "empty space",
+    agent: "-",
+    mouse_button: "NONE"
+};
+var mustlog = false;
+var last_mouseon = "";
+
+var log_data = [];
+```
+
+This is where we initialize the data to be used later on. The meaning of each of these data:
+
+|: Variable Name      :|:   Description                                                                          :|
+------------------------------------------------------------------------------------------------------------------
+| idleTime             | The time in 0.1sec that the mouse is not moving                                          |
+| data.x, data.y       | The mouse coordinates                                                                    |
+| data.winX, data.winY | The browser window dimensions                                                            |
+| data.mouseon         | The data-name of the content on which the mouse is on. 'empty space' means no-content    |
+| data.agent           | A string with information about the os, browser, ... of the user                         |
+| data.mouse_button    | The mouse button status. Possible values: "NONE", "LEFT", "RIGHT", "MIDDLE"              |
+| mustlog              | A flag that defines if the data has to be logged or not. True or False                   |
+| last_mouseon         | The content data-name on which the mouse was during the last log                         |
+| log_data             | The array of the logged data that will be sent to the server to be saved in the database |
+
+
+```javascript
+$(document).ready(function(){
+    setInterval(logMousePosition, 100);
+    setInterval(sendData, 10000);
+    ...
+```
+
+Everything inside `$(document).ready(function(){...})` will be initialized after the loading of the entire document - html.
+This has to be done to ensure that each element has been loaded and is in the browser.
+
+The `setInterval` makes each function to be executed periodically. So the `logMousePosition` function (defined later) will be executed 
+every 0.1seconds, while the `sendData` function will be executed every 10seconds.
+
+```javascript
+    $('body').mousemove(function(event){
+        mustlog = true;
+        idleTime = 0;
+
+        data.x = event.pageX;
+        data.y = event.pageY;
+        data.winX = $(window).width();
+        data.winY = $(window).height();
+        data.mouseon = $(event.target).attr("data-name");
+        data.agent = navigator.userAgent;
+
+        $("#x").html(data.x);
+        $("#y").html(data.y);
+        $("#windim").html(data.winX+" x "+data.winY);
+        $("#agent").html(data.agent);
+        if (!data.mouseon) {
+            data.mouseon = "empty space";
+        }
+        if (data.mouseon != "empty space") {
+            $("#mouseon").html(data.mouseon)
+        } else {
+            $("#mouseon").html("empty space");
+        }
+    });
+```
+
+In this part of the code we bind the `mousemove` event on the `body` html element, with the function defined above.
+So when the mouse moves we turn the `mustlog` flag to true. This means that something new has happened and we must log it. 
+Also the `idleTime` is set to zero since we are not in the idle state anymore. Afterwords the `data` object is being updated with the new mouse position 
+information. Thext the html table fields are being updated so we can have visually this information. `$('#x').html(data.x)` means: 
+*Find the element with `id="x"` and set its inner html to the value that is stored in `data.x`*. Then we check if the `data.mouseon` has a value. If not, it means 
+the mouse was not on one of the elements of interest, so we set the value to 'empty space'. Finally we decide what to write in the `mouseon` field
+of the table displayed on the screen.
+
+Lets see the next part of the script:
+
+```javascript
+    $('body').mousedown(function(event){
+        if (event.which === 1) {
+            data.mouse_button = "LEFT";
+        } else if (event.which === 2) {
+            data.mouse_button = "MIDDLE";
+        } else if (event.which === 3) {
+            data.mouse_button = "RIGHT"
+        } else {
+            return;
+        }
+        $("#mousebutton").html(data.mouse_button);
+
+        // Force log click events
+        let copy_data = Object.assign({}, data);
+        log_data.push(copy_data);
+    });
+```
+
+
+
+#### save
+#### load

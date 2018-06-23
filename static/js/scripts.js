@@ -27,7 +27,7 @@ $(document).ready(function(){
         data.winY = $(window).height();
         data.mouseon = $(event.target).attr("data-name");
         data.agent = navigator.userAgent;
-        
+
         $("#x").html(data.x);
         $("#y").html(data.y);
         $("#windim").html(data.winX+" x "+data.winY);
@@ -53,7 +53,7 @@ $(document).ready(function(){
             return;
         }
         $("#mousebutton").html(data.mouse_button);
-        
+
         // Force log click events
         let copy_data = Object.assign({}, data);
         log_data.push(copy_data);
