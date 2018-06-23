@@ -76,6 +76,6 @@ pre {
     width: 90%;
 }
 
-th, td {
+th, #pos, #dim {
     white-space: nowrap;
 }
