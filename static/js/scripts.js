@@ -72,6 +72,22 @@ $(document).ready(function(){
         } else {
             return;
         }
+        data.mouseon = $(event.target).attr("data-name");
+        if (!data.mouseon) {
+            data.mouseon = "empty space";
+            data.element.top = 0;
+            data.element.left = 0;
+            data.element.width = 0;
+            data.element.height = 0;
+        } else {
+            var pos = $(event.target).offset();
+            var w = $(event.target).width();
+            var h = $(event.target).height();
+            data.element.top = pos.top;
+            data.element.left = pos.left;
+            data.element.width = w;
+            data.element.height = h;
+        }
         $("#mousebutton").html(data.mouse_button);
 
         // Force log click events
