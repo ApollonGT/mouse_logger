@@ -40,10 +40,11 @@ def save():
 
     data = request.get_json()
     for info in data:
-        query = "INSERT INTO logs VALUES (?,strftime('%s','now'),?,?,?,?,'home',?,?,?)"
-        vals = (user_id, 
-                info['winX'], info['winY'], info['x'], info['y'], 
-                info['mouseon'], info['agent'], info['mouse_button']
+        query = "INSERT INTO logs VALUES (?,strftime('%s','now'),?,?,?,?,'home',?,?,?,?,?,?,?)"
+        vals = (user_id,
+                info['winX'], info['winY'], info['x'], info['y'],
+                info['mouseon'], info['agent'], info['mouse_button'],
+                info['el_top'], info['el_left'], info['el_width'], info['height']
                 )
         cur.execute(query, vals)
         conn.commit()

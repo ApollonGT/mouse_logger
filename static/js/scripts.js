@@ -5,6 +5,12 @@ var data = {
     winX: 0,
     winY: 0,
     mouseon: "empty space",
+    element: {
+        top: 0,
+        left: 0,
+        width: 0,
+        height: 0
+    },
     agent: "-",
     mouse_button: "NONE"
 };
@@ -34,7 +40,21 @@ $(document).ready(function(){
         $("#agent").html(data.agent);
         if (!data.mouseon) {
             data.mouseon = "empty space";
+            data.element.top = 0;
+            data.element.left = 0;
+            data.element.width = 0;
+            data.element.height = 0;
+        } else {
+            var pos = $(event.target).position();
+            var w = $(event.target).width();
+            var h = $(event.target).height();
+            data.element.top = pos.top;
+            data.element.left = pos.left;
+            data.element.width = w;
+            data.element.height = h;
         }
+        $("#pos").html(data.element.top+" x "+data.element.left);
+        $("#dim").html(data.element.width+" x "+data.element.height);
         if (data.mouseon != "empty space") {
             $("#mouseon").html(data.mouseon)
         } else {
