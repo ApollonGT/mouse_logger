@@ -148,17 +148,17 @@ var log_data = [];
 
 This is where we initialize the data to be used later on. The meaning of each of these data:
 
-|: Variable Name      :|:   Description                                                                          :|
-------------------------------------------------------------------------------------------------------------------
-| idleTime             | The time in 0.1sec that the mouse is not moving                                          |
-| data.x, data.y       | The mouse coordinates                                                                    |
-| data.winX, data.winY | The browser window dimensions                                                            |
-| data.mouseon         | The data-name of the content on which the mouse is on. 'empty space' means no-content    |
-| data.agent           | A string with information about the os, browser, ... of the user                         |
-| data.mouse_button    | The mouse button status. Possible values: "NONE", "LEFT", "RIGHT", "MIDDLE"              |
-| mustlog              | A flag that defines if the data has to be logged or not. True or False                   |
-| last_mouseon         | The content data-name on which the mouse was during the last log                         |
-| log_data             | The array of the logged data that will be sent to the server to be saved in the database |
+| : Variable Name      : | :   Description                                                                          :  |
+| :--------------------- | :----------------------------------------------------------------------------------------   |
+| idleTime               | The time in 0.1sec that the mouse is not moving                                             |
+| data.x, data.y         | The mouse coordinates                                                                       |
+| data.winX, data.winY   | The browser window dimensions                                                               |
+| data.mouseon           | The data-name of the content on which the mouse is on. 'empty space' means no-content       |
+| data.agent             | A string with information about the os, browser, ... of the user                            |
+| data.mouse_button      | The mouse button status. Possible values: "NONE", "LEFT", "RIGHT", "MIDDLE"                 |
+| mustlog                | A flag that defines if the data has to be logged or not. True or False                      |
+| last_mouseon           | The content data-name on which the mouse was during the last log                            |
+| log_data               | The array of the logged data that will be sent to the server to be saved in the database    |
 
 
 ```javascript
