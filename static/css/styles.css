@@ -76,6 +76,6 @@ pre {
     width: 90%;
 }
 
-th {
+th, td {
     white-space: nowrap;
 }

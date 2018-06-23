@@ -45,7 +45,7 @@ $(document).ready(function(){
             data.element.width = 0;
             data.element.height = 0;
         } else {
-            var pos = $(event.target).position();
+            var pos = $(event.target).offset();
             var w = $(event.target).width();
             var h = $(event.target).height();
             data.element.top = pos.top;
